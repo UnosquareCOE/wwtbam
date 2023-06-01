@@ -9,7 +9,7 @@ For events it can be fun to play interactive games; however with the trend towar
 
 ## Requirements
 
-MoSCoW prioritization, also known as the MoSCoW method or MoSCoW analysis, is a popular prioritization technique for managing requirements. M - Must have, S - Should have, C - Could have, W - Won't have.
+MoSCoW prioritization, also known as the MoSCoW method or MoSCoW analysis, is a popular prioritization technique for managing requirements. M - Must have, S - Should have, C - Could have, W - Will not have.
 
 ### Must Have
 - A user must be able to create/update an account.
