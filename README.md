@@ -42,6 +42,8 @@ MoSCoW prioritization, also known as the MoSCoW method or MoSCoW analysis, is a 
 
 ## Domain Model Diagram
 
+This diagram demostrates the main domains for WWTBAM, along with a short description on how they interact.
+
 ```mermaid
 erDiagram
     Game }|--}| Question : contains
@@ -60,6 +62,117 @@ erDiagram
 
 ## Entity Relationship Diagram
 
+This diagram demostrates the table structure along with the cardinality that is used for the WWTBAM databse.
 
+```mermaid
+erDiagram
+    accounts {
+        int id pk
+        text first_name
+        text last_name
+        text email
+        timestamp created_date
+        timestamp modified_date
+        text password
+    }
+    sessions {
+        guid id pk
+        text name
+        text password
+        timestamp created_date
+        timestamp modified_date
+        int owner_id 
+    }
+    game_participant_types {
+        int id pk
+        text description
+    }
+    participants {
+        guid id pk
+        text name
+        text avatar
+        timestamp created_date
+        int session_id
+    }
+    game_types {
+        int id pk
+        text description
+    }
+    games {
+        int id pk
+        timestamp created_date
+        int session_id
+        int game_type_id
+    }
+    lifelines {
+        int id pk
+        text description 
+    }
+    question_difficulty_types {
+        int id pk
+        text description
+        int value
+    }
+    questions {
+        int id pk
+        text title
+        int question_difficulty_type_id
+    }
+    game_lifelines {
+        int id pk
+        int game_id fk
+        int lifeline_id fk
+    }
+    game_milestones {
+        int id pk
+        int game_id fk
+        int sequence
+    }
+    game_participants {
+        int id pk
+        int game_id fk
+        int participant_id fk
+        int game_participant_type_id fk
+    }
+    game_questions {
+        int id pk
+        int sequence
+        int game_id fk
+        int question_id fk
+    }
+    question_items {
+        int id pk
+        text value
+        bit outcome
+        int question_id fk
+    }
+    game_participant_questions {
+        int id pk
+        timestamp created_date
+        int game_participant_id fk
+        int game_question_id fk
+        int selection_id fk
+    }
+    accounts ||--|{ sessions : ""
+    sessions ||--|{ participants: ""
+    sessions ||--|{ games: ""
+    participants ||--|{ game_participants: ""
+    game_participants ||--|{ game_participant_questions: ""
+    question_items ||--|{ game_participant_questions: ""
+    questions ||--|{ question_items : ""
+    question_difficulty_types ||--|{ questions : ""
+    questions ||--|{ game_questions: ""
+    game_questions ||--|{ game_participant_questions : ""
+    games ||--|{ game_questions : ""
+    game_types ||--|{ games : ""
+    games ||--|{ game_lifelines: ""
+    lifelines ||--|{ game_lifelines : ""
+    games ||--|{ game_questions : ""
+    games ||--|{ game_participants : ""
+    games ||--|{ game_milestones : ""
+    game_participant_types ||--|{ game_participants: ""
+
+
+```
 
 ## API Design
