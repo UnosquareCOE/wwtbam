@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS public.question_items
 (
     id serial constraint question_items_pk primary key,
     value text,
-    boolean outcome,
+    outcome boolean,
     question_id int constraint question_items_questions_question_id references public.participants
 );
 
