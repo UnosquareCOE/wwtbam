@@ -275,18 +275,6 @@ _NOTE: This actually performs a 'soft' deletion, we don't remove the account fro
 
 Response: `204 No Content`
 
+---
+
 ### Games
-
-
- <!-- Game }|--}| Question : contains
-    Contestant o|-- }| Lifeline: owns
-    Game o|-- }| Lifeline: owns
-    Milestone }|-- || Game: contains
-    Question }|-- || Milestone: associated
-    Account ||--}| Session : creates
-    Session ||--}| Game: creates
-    Participant }|--|| Session : joins
-    Contestant ||-- }| Participant : is
-    Presenter ||-- }| Participant : is
-    Contestant }|-- || Game : plays
-    Presenter }|-- || Game : directs -->
