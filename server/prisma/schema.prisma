@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id            Int        @id(map: "accounts_pk") @default(autoincrement())
+  first_name    String?
+  last_name     String?
+  email         String?
+  created_date  DateTime?  @db.Timestamp(6)
+  modified_date DateTime?  @db.Timestamp(6)
+  password      String?
+  sessions      sessions[]
+}
+
+model flyway_schema_history {
+  installed_rank Int      @id(map: "flyway_schema_history_pk")
+  version        String?  @db.VarChar(50)
+  description    String   @db.VarChar(200)
+  type           String   @db.VarChar(20)
+  script         String   @db.VarChar(1000)
+  checksum       Int?
+  installed_by   String   @db.VarChar(100)
+  installed_on   DateTime @default(now()) @db.Timestamp(6)
+  execution_time Int
+  success        Boolean
+
+  @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+model game_lifelines {
+  id          Int        @id(map: "game_lifelines_pk") @default(autoincrement())
+  title       String?
+  lifeline_id Int?
+  lifelines   lifelines? @relation(fields: [lifeline_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_lifelines_lifelines_lifeline_id")
+}
+
+model game_milestones {
+  id       Int    @id(map: "game_milestones_pk") @default(autoincrement())
+  game_id  Int?
+  sequence Int?
+  games    games? @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_milestones_games_game_id")
+}
+
+model game_participant_questions {
+  id                  Int                @id(map: "game_participant_questions_pk") @default(autoincrement())
+  created_date        DateTime?          @db.Timestamp(6)
+  game_participant_id Int?
+  game_participants   game_participants? @relation(fields: [game_participant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_participant_questions_game_participants_game_participant_i")
+}
+
+model game_participant_types {
+  id                Int                 @id(map: "game_participant_types_pk") @default(autoincrement())
+  description       String?
+  game_participants game_participants[]
+}
+
+model game_participants {
+  id                         Int                          @id(map: "game_participants_pk") @default(autoincrement())
+  game_id                    Int?
+  participant_id             Int?
+  game_participant_type_id   Int?
+  game_participant_questions game_participant_questions[]
+  game_participant_types     game_participant_types?      @relation(fields: [game_participant_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_participants_game_participant_types_game_participant_type_")
+  games                      games?                       @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_participants_games_game_id")
+  participants               participants?                @relation(fields: [participant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_participants_participants_participant_id")
+}
+
+model game_questions {
+  id           Int           @id(map: "game_questions_pk") @default(autoincrement())
+  sequence     Int?
+  game_id      Int?
+  question_id  Int?
+  games        games?        @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_games_game_id")
+  participants participants? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_questions_question_id")
+}
+
+model game_types {
+  id          Int     @id(map: "game_types_pk") @default(autoincrement())
+  description String?
+  games       games[]
+}
+
+model games {
+  id                Int                 @id(map: "games_pk") @default(autoincrement())
+  created_date      DateTime?           @db.Timestamp(6)
+  description       String?
+  session_id        Int?
+  game_type_id      Int?
+  game_milestones   game_milestones[]
+  game_participants game_participants[]
+  game_questions    game_questions[]
+  game_types        game_types?         @relation(fields: [game_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "games_game_types_game_type_id")
+  sessions          sessions?           @relation(fields: [session_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "games_sessions_session_id")
+}
+
+model lifelines {
+  id             Int              @id(map: "lifelines_pk") @default(autoincrement())
+  description    String?
+  game_lifelines game_lifelines[]
+}
+
+model participants {
+  id                Int                 @id(map: "participants_pk") @default(autoincrement())
+  name              String?
+  avatar            String?
+  created_date      DateTime?           @db.Timestamp(6)
+  session_id        Int?
+  game_participants game_participants[]
+  game_questions    game_questions[]
+  sessions          sessions?           @relation(fields: [session_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "participants_sessions_session_id")
+  question_items    question_items[]
+}
+
+model question_difficulty_types {
+  id          Int         @id(map: "question_difficulty_types_pk") @default(autoincrement())
+  description String?
+  value       Int?
+  questions   questions[]
+}
+
+model question_items {
+  id           Int           @id(map: "question_items_pk") @default(autoincrement())
+  value        String?
+  outcome      Boolean?
+  question_id  Int?
+  participants participants? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "question_items_questions_question_id")
+}
+
+model questions {
+  id                          Int                        @id(map: "questions_pk") @default(autoincrement())
+  title                       String?
+  question_difficulty_type_id Int?
+  question_difficulty_types   question_difficulty_types? @relation(fields: [question_difficulty_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questions_question_difficulty_types_question_difficulty_type_id")
+}
+
+model sessions {
+  id            Int            @id(map: "sessions_pk") @default(autoincrement())
+  name          String?
+  last_name     String?
+  password      String?
+  created_date  DateTime?      @db.Timestamp(6)
+  modified_date DateTime?      @db.Timestamp(6)
+  owner_id      Int?
+  games         games[]
+  participants  participants[]
+  accounts      accounts?      @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sessions_accounts_owner_id")
+}

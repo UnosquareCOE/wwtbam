@@ -6,6 +6,7 @@ import { participantsRouter } from './routers/participants';
 
 const app = express();
 
+app.use(express.json())
 app.use("/accounts", accountsRouter);
 app.use("/sessions", sessionsRouter);
 app.use("/participants", participantsRouter);
