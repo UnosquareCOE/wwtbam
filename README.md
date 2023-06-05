@@ -6,7 +6,6 @@ This application permits users to play `who wants to be a millionaire` over the 
 
 For events it can be fun to play interactive games; however with the trend towards remote working this can be difficult to facilitate in a seamless way. The objective of this application is to provide an interface that allows a `presenter` to run a game in the same way that the TV show is run.
 
-
 ## Requirements
 
 MoSCoW prioritization, also known as the MoSCoW method or MoSCoW analysis, is a popular prioritization technique for managing requirements. M - Must have, S - Should have, C - Could have, W - Will not have.
@@ -175,4 +174,119 @@ erDiagram
 
 ```
 
-## API Design
+## API Specifications
+
+### Accounts
+
+`GET /accounts`
+###### Returns a list of accounts
+
+Responses: 
+- `200 OK`
+```json
+[
+  {
+    "id": 1,
+    "email_address": "mark.brown@unosquare.com",
+    "first_name": "Mark",
+    "last_name": "Brown"
+  },
+  {
+    "id": 2,
+    "email_address": "adam.kane@unosquare.com",
+    "first_name": "Adam",
+    "last_name": "Kane"
+  }
+]
+```
+
+---
+
+`GET /accounts/{accountId}`
+###### Returns an account
+
+Responses: 
+- `200 OK`
+- `404 Not Found`
+```json
+{
+    "id": 1,
+    "email_address": "mark.brown@unosquare.com",
+    "first_name": "Mark",
+    "last_name": "Brown",
+    "games": []
+}
+```
+
+---
+
+`POST /accounts`
+###### Creates an account
+
+Request:
+```json
+  {
+    "email_address": "mark.brown@unosquare.com",
+    "first_name": "Mark",
+    "last_name": "Brown",
+    "password": "ABC12345!"
+  }
+```
+
+Responses: 
+- `201 Created`
+- `400 Bad Request`
+```json
+{
+    "id": 1,
+    "email_address": "mark.brown@unosquare.com",
+    "first_name": "Mark",
+    "last_name": "Brown",
+    "password": "ABC12345!"
+}
+```
+
+---
+
+`PUT /accounts/{accountId}`
+###### Updates an account
+_NOTE: Password is an optional field, if it is not supplied, it is not updated._
+
+Request:
+```json
+  {
+    "email_address": "mark.brown@unosquare.com",
+    "first_name": "Mark",
+    "last_name": "Brown",
+    "password": "ABC12345!"
+  }
+```
+
+Responses: 
+- `204 No Content`
+- `400 Bad Request`
+- `404 Not Found`
+
+---
+
+`DELETE /accounts/{accountId}`
+###### deletes an account
+_NOTE: This actually performs a 'soft' deletion, we don't remove the account from the database, we simply mark it as inactive._
+
+Response: `204 No Content`
+
+### Games
+
+
+ <!-- Game }|--}| Question : contains
+    Contestant o|-- }| Lifeline: owns
+    Game o|-- }| Lifeline: owns
+    Milestone }|-- || Game: contains
+    Question }|-- || Milestone: associated
+    Account ||--}| Session : creates
+    Session ||--}| Game: creates
+    Participant }|--|| Session : joins
+    Contestant ||-- }| Participant : is
+    Presenter ||-- }| Participant : is
+    Contestant }|-- || Game : plays
+    Presenter }|-- || Game : directs -->
