@@ -468,8 +468,8 @@ Responses:
             "name": "50/50",
             "status": "Available",
         }
-    ]
-    "milestones:" [
+    ],
+    "milestones": [
        {
         "sequence": 5
        },
@@ -500,7 +500,7 @@ Responses:
     "createdDate": "2023-01-11 10:27:21.240752",
     "currentQuestion": 6,
     "status": "In Progress",
-    "milestones:" [
+    "milestones": [
        {
         "sequence": 5
        },
