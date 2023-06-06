@@ -117,10 +117,15 @@ erDiagram
         text title
         int question_difficulty_type_id
     }
+    game_lifeline_statuses {
+        int id pk
+        text description 
+    }
     game_lifelines {
         int id pk
         int game_id fk
         int lifeline_id fk
+        int game_lineline_status_id fk
     }
     game_milestones {
         int id pk
@@ -166,6 +171,7 @@ erDiagram
     game_types ||--|{ games : ""
     games ||--|{ game_lifelines: ""
     lifelines ||--|{ game_lifelines : ""
+    game_lifeline_statuses ||--|{ game_lifelines : ""
     games ||--|{ game_questions : ""
     games ||--|{ game_participants : ""
     games ||--|{ game_milestones : ""
@@ -187,15 +193,15 @@ Responses:
 [
   {
     "id": 1,
-    "email_address": "mark.brown@unosquare.com",
-    "first_name": "Mark",
-    "last_name": "Brown"
+    "emailAddress": "mark.brown@unosquare.com",
+    "firstName": "Mark",
+    "lastName": "Brown"
   },
   {
     "id": 2,
-    "email_address": "adam.kane@unosquare.com",
-    "first_name": "Adam",
-    "last_name": "Kane"
+    "emailAddress": "adam.kane@unosquare.com",
+    "firstName": "Adam",
+    "lastName": "Kane"
   }
 ]
 ```
@@ -211,9 +217,9 @@ Responses:
 ```json
 {
     "id": 1,
-    "email_address": "mark.brown@unosquare.com",
-    "first_name": "Mark",
-    "last_name": "Brown",
+    "emailAddress": "mark.brown@unosquare.com",
+    "firstName": "Mark",
+    "lastName": "Brown",
     "games": []
 }
 ```
@@ -225,12 +231,12 @@ Responses:
 
 Request:
 ```json
-  {
-    "email_address": "mark.brown@unosquare.com",
-    "first_name": "Mark",
-    "last_name": "Brown",
+{
+    "emailAddress": "mark.brown@unosquare.com",
+    "firstName": "Mark",
+    "lastName": "Brown",
     "password": "ABC12345!"
-  }
+}
 ```
 
 Responses: 
@@ -239,10 +245,9 @@ Responses:
 ```json
 {
     "id": 1,
-    "email_address": "mark.brown@unosquare.com",
-    "first_name": "Mark",
-    "last_name": "Brown",
-    "password": "ABC12345!"
+    "emailAddress": "mark.brown@unosquare.com",
+    "firstName": "Mark",
+    "lastName": "Brown"
 }
 ```
 
@@ -254,12 +259,12 @@ _NOTE: Password is an optional field, if it is not supplied, it is not updated._
 
 Request:
 ```json
-  {
-    "email_address": "mark.brown@unosquare.com",
-    "first_name": "Mark",
-    "last_name": "Brown",
+{
+    "emailAddress": "mark.brown@unosquare.com",
+    "firstName": "Mark",
+    "lastName": "Brown",
     "password": "ABC12345!"
-  }
+}
 ```
 
 Responses: 
@@ -277,4 +282,399 @@ Response: `204 No Content`
 
 ---
 
+### Sessions
+
+`GET /sessions/{sessionId}`
+###### Returns a session
+
+Responses: 
+- `200 OK`
+- `404 Not Found`
+```json
+{
+    "id": "4205d325-8fbb-486f-be04-0b8ac46b0cc1",
+    "name": "test session",
+    "createdDate": "2023-01-11 10:27:21.240752"
+}
+```
+
+`POST /sessions`
+###### Creates a session
+
+Request:
+```json
+{
+    "name": "test session",
+    "password": "ABC12345!"
+}
+```
+
+Responses: 
+- `201 Created`
+- `400 Bad Request`
+```json
+{
+    "id": 1,
+    "name": "test session"
+}
+```
+
+---
+
+`DELETE /sessions/{sessionId}`
+###### deletes an account
+_NOTE: There should be validation here for open/ongoing games._
+
+Response: `204 No Content`
+
+---
+
+### Sessions Participants
+
+`GET /sessions/{sessionId}/participants`
+###### Returns a session participants
+
+Responses: 
+- `200 OK`
+- `404 Not Found`
+```json
+[
+    {
+        "id": "4205d325-8fbb-486f-be04-0b8ac46b0cc1",
+        "name": "Mark Brown",
+        "avatar": "https://somesite.com/test.png",
+        "createdDate": "2023-01-11 10:27:21.240752"
+    }
+]
+```
+
+---
+
+
+`POST /sessions/{sessionId}/participants`
+###### creates a participant for a session
+
+Request:
+```json
+{
+    "name": "Mark Brown",
+    "avatar": "https://somesite.com/test.png"
+}
+```
+
+Responses: 
+- `201 OK`
+- `404 Not Found`
+```json
+{
+    "id": "4205d325-8fbb-486f-be04-0b8ac46b0cc1",
+    "name": "Mark Brown",
+    "avatar": "https://somesite.com/test.png",
+    "createdDate": "2023-01-11 10:27:21.240752"
+}
+```
+
+---
+
+### Session Games
+
+`GET /sessions/{sessionId}/games`
+###### Returns a list of games for a session
+
+Responses: 
+- `200 OK`
+```json
+[
+  {
+    "id": 1,
+    "gameTypeId": 1,
+    "createdDate": "2023-01-11 10:27:21.240752"
+  },
+  {
+    "id": 2,
+    "gameTypeId": 2,
+    "createdDate": "2023-01-11 11:27:21.240752"
+  }
+]
+```
+
+---
+
+`POST /sessions/{sessionId}/games`
+###### creates a game for a session
+
+_NOTE: The game status will be determined by the questions dynamically rather than maintaining a DB state._
+
+Request:
+```json
+{
+    "game_type_id": 1,
+    "participants": [
+        {
+             "participantId": "885ac4fe-beb9-41ac-b3f0-55e1a934f6ac",
+             "participantTypeId": 1,
+        },
+        {
+             "participantId": "885ac4fe-beb9-41ac-b3f0-55e1a934f6ac",
+             "participantTypeId": 2,
+        }
+    ]
+}
+```
+
+Responses: 
+- `201 OK`
+- `400 Bad Request`
+- `404 Not Found`
+```json
+{
+    "id": 1,
+    "gameTypeId": 1,
+    "status": "Not Started",
+    "createdDate": "2023-01-11 11:27:21.240752",
+    "participants" : 
+    [
+        {
+            "id": 1,
+            "participantId": "4205d325-8fbb-486f-be04-0b8ac46b0cc1",
+            "name": "Mark Brown",
+            "avatar": "https://somesite.com/test.png",
+            "createdDate": "2023-01-11 10:27:21.240752",
+            "participantTypeId": 1
+        },
+        {
+            "id": 2,
+            "participantId": "885ac4fe-beb9-41ac-b3f0-55e1a934f6ac",
+            "name": "Adam Kane",
+            "avatar": "https://somesite.com/adam.png",
+            "createdDate": "2023-01-11 11:27:21.240752",
+            "participantTypeId": 2
+        }
+    ],
+    "currentQuestion": 0,
+    "lifelines": [
+        {
+            "id": 1,
+            "name": "Phone a friend",
+            "status": "Available",
+        },
+        {
+            "id": 2,
+            "name": "Ask the audience",
+            "status": "Available",
+        },
+        {
+            "id": 3,
+            "name": "50/50",
+            "status": "Available",
+        }
+    ]
+    "milestones:" [
+       {
+        "sequence": 5
+       },
+       {
+        "sequence": 7
+       },
+       {
+        "sequence": 12
+       }
+    ],
+}
+```
+
+---
+
 ### Games
+
+`GET /games/{gameId}`
+###### Returns game details
+
+Responses: 
+- `200 OK`
+- `404 Not Found`
+```json
+{
+    "id": 1,
+    "gameTypeId": 1,
+    "createdDate": "2023-01-11 10:27:21.240752",
+    "currentQuestion": 6,
+    "status": "In Progress",
+    "milestones:" [
+       {
+        "sequence": 5
+       },
+       {
+        "sequence": 7
+       },
+       {
+        "sequence": 12
+       }
+    ],
+}
+```
+
+---
+
+`DELETE /games/{gameId}`
+###### Deletes a game
+
+Response: `204 No Content`
+
+---
+
+### Game Participants
+
+`POST /games/{gameId}/participants`
+###### creates a participant for an existing game
+
+Request:
+```json
+{
+    "participantId": "885ac4fe-beb9-41ac-b3f0-55e1a934f6ac",
+    "participantTypeId": 1,
+}
+```
+
+Responses: 
+- `201 OK`
+- `404 Not Found`
+```json
+ [
+    {
+        "id": 1,
+        "participantId": "4205d325-8fbb-486f-be04-0b8ac46b0cc1",
+        "name": "Mark Brown",
+        "avatar": "https://somesite.com/test.png",
+        "createdDate": "2023-01-11 10:27:21.240752",
+        "participantTypeId": 1
+    },
+    {
+        "id": 2,
+        "participantId": "885ac4fe-beb9-41ac-b3f0-55e1a934f6ac",
+        "name": "Adam Kane",
+        "avatar": "https://somesite.com/adam.png",
+        "createdDate": "2023-01-11 11:27:21.240752",
+        "participantTypeId": 2
+    }
+]
+```
+
+`DELETE /games/{gameId}/participants/{participantId}`
+###### Deletes a participant from a game
+
+Response: `204 No Content`
+
+---
+
+`GET /games/{gameId}/participants/types`
+###### Returns participant types applicable for the game.
+
+Responses: 
+- `200 OK`
+```json
+[
+  {
+    "id": 1,
+    "description": "Presenter"
+  },
+  {
+    "id": 2,
+    "description": "Contestant"
+  },
+  {
+    "id": 3,
+    "description": "Audience"
+  },
+]
+```
+
+---
+
+### Game Questions
+
+`GET /games/{gameId}/questions`
+###### Returns questions for the game.
+
+Responses: 
+- `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "sequence": 1,
+        "difficulty": "Easy",
+        "title": "Is water wet?",
+        "items": [
+            {
+                "id": 1,
+                "value": "Yes"
+            },
+            {
+                "id": 2,
+                "value": "No"
+            },
+            {
+                "id": 3,
+                "value": "Maybe"
+            },
+            {
+                "id": 4,
+                "value": "Can you repeat the question?"
+            },
+        ],
+        "selection": 1,
+        "outcome": true
+    },
+    {
+        "id": 2,
+        "sequence": 2,
+        "difficulty": "Medium",
+        "title": "Where is London located?",
+        "items": [
+            {
+                "id": 5,
+                "value": "England"
+            },
+            {
+                "id": 6,
+                "value": "France"
+            },
+            {
+                "id": 7,
+                "value": "Spain"
+            },
+            {
+                "id": 8,
+                "value": "Mariana Trench"
+            },
+        ],
+        "selection": null,
+        "outcome": null
+    },
+]
+```
+
+---
+
+`POST /games/{gameId}/questions`
+###### creates an answer for a question
+
+Request:
+```json
+{
+    "questionId": 1,
+    "selectionId": 1 ,
+}
+```
+
+Responses: 
+- `201 OK`
+- `404 Not Found`
+```json
+{
+    "outcome": true
+}
+```
+
+---

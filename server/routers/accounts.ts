@@ -20,7 +20,6 @@ accountsRouter.route("/:accountId(\\d+)").put((req : Request, res: Response) => 
     res.send(`Hello from PUT Account ${accountId}`);
 });
 
-
 accountsRouter.route("/:accountId(\\d+)").delete((req : Request, res: Response) => {
     const { accountId } = req.params;
     res.send(`Hello from DELETE Account ${accountId}`);

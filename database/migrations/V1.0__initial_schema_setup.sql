@@ -70,12 +70,18 @@ CREATE TABLE IF NOT EXISTS public.questions
     question_difficulty_type_id int constraint questions_question_difficulty_types_question_difficulty_type_id references public.question_difficulty_types
 );
 
+CREATE TABLE IF NOT EXISTS public.game_lifeline_statuses
+(
+    id serial constraint lifelines_pk primary key,
+    description text
+);
 
 CREATE TABLE IF NOT EXISTS public.game_lifelines
 (
     id serial constraint game_lifelines_pk primary key,
     title text,
-    lifeline_id int constraint game_lifelines_lifelines_lifeline_id references public.lifelines
+    lifeline_id int constraint game_lifelines_lifelines_lifeline_id references public.lifelines,
+    game_lineline_status_id int constraint game_lifelines_game_lineline_statuses_game_lineline_status_id references public.game_lifeline_statuses
 );
 
 CREATE TABLE IF NOT EXISTS public.game_milestones
