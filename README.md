@@ -676,5 +676,3 @@ Responses:
     "outcome": true
 }
 ```
-
----
