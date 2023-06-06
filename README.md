@@ -107,6 +107,16 @@ erDiagram
         int id pk
         text description 
     }
+    game_type_lifelines {
+        int id pk
+        int game_type_id fk
+        int lifeline_id fk
+    }
+    game_type_milestones {
+        int id pk
+        int game_type_id fk
+        int sequence
+    }
     question_difficulty_types {
         int id pk
         text description
@@ -176,6 +186,9 @@ erDiagram
     games ||--|{ game_participants : ""
     games ||--|{ game_milestones : ""
     game_participant_types ||--|{ game_participants: ""
+    lifelines ||--|{ game_type_lifelines: ""
+    game_types ||--|{ game_type_lifelines: ""
+    game_types ||--|{ game_type_milestones: ""
 
 
 ```
@@ -403,7 +416,7 @@ Responses:
 `POST /sessions/{sessionId}/games`
 ###### creates a game for a session
 
-_NOTE: The game status will be determined by the questions dynamically rather than maintaining a DB state._
+_NOTE: The game status will be determined by the questions dynamically rather than maintaining a DB state. We will retrieve the applicable lifelines and milestones from the associated game_type_lifelines & game_type_milestones tables._
 
 Request:
 ```json

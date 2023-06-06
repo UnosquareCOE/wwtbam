@@ -56,6 +56,20 @@ CREATE TABLE IF NOT EXISTS public.lifelines
     description text
 );
 
+CREATE TABLE IF NOT EXISTS public.game_type_lifelines
+(
+    id serial constraint game_type_lifelines_pk primary key,
+    game_type_id int constraint game_type_lifelines_game_types_game_type_id references public.game_types,
+    lifeline_id int constraint game_type_lifelines_lifelines_lifeline_id references public.lifelines
+);
+
+CREATE TABLE IF NOT EXISTS public.game_type_milestones
+(
+    id serial constraint game_type_milestones_pk primary key,
+    game_type_id int constraint game_type_lifelines_game_types_game_type_id references public.game_types,
+    sequence int
+);
+
 CREATE TABLE IF NOT EXISTS public.question_difficulty_types
 (
     id serial constraint question_difficulty_types_pk primary key,
