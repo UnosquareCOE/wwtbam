@@ -19,6 +19,6 @@ insert into public.question_difficulty_types(description, value) values
 ('Very Hard', 4);
 
 
-insert into public.game_lifeline_statuses(description, value) values
-('Available', 1),
-('Unavailable', 2);
+insert into public.game_lifeline_statuses(description) values
+('Available'),
+('Unavailable');

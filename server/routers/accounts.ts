@@ -1,28 +1,67 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import { body } from "express-validator";
+import { AccountController } from "../controllers";
+import { Validation } from "../utils";
 
-const accountsRouter = Router();
+const AccountsRouter = Router();
 
-accountsRouter.route("/").get((req : Request, res: Response) => {
-    res.send('Hello from GET Accounts');
-});
+/**
+ * @swagger
+ * /accounts:
+ *   get:
+ *     tags: [
+ *       accounts
+ *     ]
+ *     summary: Returns an array of account items
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             examples:
+ *               jsonObject:
+ *                 summary: An example JSON response
+ *                 value: '[{ "id": 1, "email": "email@test.com", "firstName": "user", "lastName": "last" },
+ *                        { "id": 2, "email": "email2@test.com", "firstName": "first", "lastName": "last" } ]'
+ *       204:
+ *         description: No content
+ */
+AccountsRouter.route("/").get(AccountController.getAccounts);
 
-accountsRouter.route("/:accountId(\\d+)").get((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from GET Account ${accountId}`);
-});
+AccountsRouter.route("/:accountId(\\d+)").get(AccountController.getAccount);
 
-accountsRouter.route("/").post((req : Request, res: Response) => {
-    res.send('Hello from POST Accounts');
-});
+AccountsRouter.route("/").post(
+  [
+    body("email")
+      .isLength({ min: 3 })
+      .withMessage("the email must have minimum length of 3")
+      .isEmail()
+      .withMessage("the email must be in a valid email format")
+      .trim(),
+    body("firstName")
+      .isLength({ min: 3 })
+      .withMessage("the firstName must have minimum length of 3")
+      .trim(),
+    body("lastName")
+      .isLength({ min: 3 })
+      .withMessage("the lastName must have minimum length of 3")
+      .trim(),
+    body("password")
+      .isLength({ min: 8, max: 15 })
+      .withMessage("the password should have min and max length between 8-15")
+      .matches(/\d/)
+      .withMessage("the password should have at least one number")
+      .matches(/[!@#$%^&*(),.?":{}|<>]/)
+      .withMessage("the password should have at least one special character"),
+  ],
+  Validation.validate,
+  AccountController.createAccount
+);
 
-accountsRouter.route("/:accountId(\\d+)").put((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from PUT Account ${accountId}`);
-});
+AccountsRouter.route("/:accountId(\\d+)").put(AccountController.updateAccount);
 
-accountsRouter.route("/:accountId(\\d+)").delete((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from DELETE Account ${accountId}`);
-});
+AccountsRouter.route("/:accountId(\\d+)").delete(
+  AccountController.deleteAccount
+);
 
-export { accountsRouter };
+export { AccountsRouter };

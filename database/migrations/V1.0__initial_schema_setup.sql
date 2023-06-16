@@ -1,12 +1,13 @@
 CREATE TABLE IF NOT EXISTS public.accounts
 (
     id serial constraint accounts_pk primary key,
-    first_name text,
-    last_name text,
-    email text,
-    created_date timestamp,
-    modified_date timestamp,
-    password text
+    first_name text NOT NULL,
+    last_name text NOT NULL,
+    email text NOT NULL,
+    active boolean NOT NULL default TRUE,
+    created_date timestamp NOT NULL default CURRENT_TIMESTAMP,
+    modified_date timestamp NULL,
+    password text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS public.sessions
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS public.questions
 
 CREATE TABLE IF NOT EXISTS public.game_lifeline_statuses
 (
-    id serial constraint lifelines_pk primary key,
+    id serial constraint game_lifeline_statuses_pk primary key,
     description text
 );
 
