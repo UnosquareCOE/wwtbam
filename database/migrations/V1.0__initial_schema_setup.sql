@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS public.sessions
 (
     id serial constraint sessions_pk primary key,
     name text,
-    last_name text,
     password text,
     created_date timestamp,
     modified_date timestamp,
@@ -119,7 +118,7 @@ CREATE TABLE IF NOT EXISTS public.game_questions
     id serial constraint game_questions_pk primary key,
     sequence int,
     game_id int constraint game_questions_games_game_id references public.games,
-    question_id int constraint game_questions_questions_question_id references public.participants
+    question_id int constraint game_questions_questions_question_id references public.questions
 );
 
 CREATE TABLE IF NOT EXISTS public.question_items
@@ -127,7 +126,7 @@ CREATE TABLE IF NOT EXISTS public.question_items
     id serial constraint question_items_pk primary key,
     value text,
     outcome boolean,
-    question_id int constraint question_items_questions_question_id references public.participants
+    question_id int constraint question_items_questions_question_id references public.questions
 );
 
 CREATE TABLE IF NOT EXISTS public.game_participant_questions

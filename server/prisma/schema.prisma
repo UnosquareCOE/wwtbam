@@ -81,12 +81,12 @@ model game_participants {
 }
 
 model game_questions {
-  id           Int           @id(map: "game_questions_pk") @default(autoincrement())
-  sequence     Int?
-  game_id      Int?
-  question_id  Int?
-  games        games?        @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_games_game_id")
-  participants participants? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_questions_question_id")
+  id          Int        @id(map: "game_questions_pk") @default(autoincrement())
+  sequence    Int?
+  game_id     Int?
+  question_id Int?
+  games       games?     @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_games_game_id")
+  questions   questions? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_questions_questions_question_id")
 }
 
 model game_type_lifelines {
@@ -139,9 +139,7 @@ model participants {
   created_date      DateTime?           @db.Timestamp(6)
   session_id        Int?
   game_participants game_participants[]
-  game_questions    game_questions[]
   sessions          sessions?           @relation(fields: [session_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "participants_sessions_session_id")
-  question_items    question_items[]
 }
 
 model question_difficulty_types {
@@ -152,24 +150,25 @@ model question_difficulty_types {
 }
 
 model question_items {
-  id           Int           @id(map: "question_items_pk") @default(autoincrement())
-  value        String?
-  outcome      Boolean?
-  question_id  Int?
-  participants participants? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "question_items_questions_question_id")
+  id          Int        @id(map: "question_items_pk") @default(autoincrement())
+  value       String?
+  outcome     Boolean?
+  question_id Int?
+  questions   questions? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "question_items_questions_question_id")
 }
 
 model questions {
   id                          Int                        @id(map: "questions_pk") @default(autoincrement())
   title                       String?
   question_difficulty_type_id Int?
+  game_questions              game_questions[]
+  question_items              question_items[]
   question_difficulty_types   question_difficulty_types? @relation(fields: [question_difficulty_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questions_question_difficulty_types_question_difficulty_type_id")
 }
 
 model sessions {
   id            Int            @id(map: "sessions_pk") @default(autoincrement())
   name          String?
-  last_name     String?
   password      String?
   created_date  DateTime?      @db.Timestamp(6)
   modified_date DateTime?      @db.Timestamp(6)

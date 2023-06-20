@@ -1,24 +1,21 @@
-import { Router, Request, Response } from "express";
+import { Router } from 'express'
+import { SessionController } from '../controllers'
+import { verifyAuth } from '../middleware/verifyAuth'
 
-const SessionsRouter = Router();
+const SessionsRouter = Router()
 
-SessionsRouter.route("/:sessionsId").get((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from GET Session ${accountId}`);
-});
+SessionsRouter.route('/').get(SessionController.getSessions)
 
-SessionsRouter.route("/").post((req : Request, res: Response) => {
-    res.send('Hello from POST Sessions');
-});
+SessionsRouter.route('/:sessionId').get(SessionController.getSession)
 
-SessionsRouter.route("/:sessionId").delete((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from DELETE Session ${accountId}`);
-});
+SessionsRouter.route('/').post(SessionController.createSession)
 
-SessionsRouter.route("/:sessionId/participants").get((req : Request, res: Response) => {
-    const { accountId } = req.params;
-    res.send(`Hello from GET Session Participants ${accountId}`);
-});
+SessionsRouter.route('/:sessionId').delete(SessionController.deleteSession)
 
-export { SessionsRouter };
+SessionsRouter.route('/:sessionId/participants').get(
+  SessionController.getSessionParticipants
+)
+
+SessionsRouter.route('/:sessionId/games').get(SessionController.getGames)
+
+export { SessionsRouter }
