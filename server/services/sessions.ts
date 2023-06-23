@@ -20,7 +20,7 @@ async function getSessions(ownerId: number) {
   })
 }
 
-async function getSession(sessionId: number) {
+async function getSession(sessionId: string) {
   try {
     const session = await prisma.sessions.findFirst({
       where: { id: sessionId },
@@ -54,7 +54,7 @@ async function createSession(
   return { id: id, name: name, createdDate: created_date }
 }
 
-async function deleteSession(sessionId: number) {
+async function deleteSession(sessionId: string) {
   const openGames = await prisma.games.findMany({
     where: { session_id: sessionId },
   })
@@ -68,7 +68,7 @@ async function deleteSession(sessionId: number) {
   return null
 }
 
-async function getSessionParticipants(sessionId: number) {
+async function getSessionParticipants(sessionId: string) {
   try {
     const participants = await prisma.participants.findMany({
       where: { session_id: sessionId },

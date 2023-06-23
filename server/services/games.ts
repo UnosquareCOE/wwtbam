@@ -1,8 +1,11 @@
-import { games } from '@prisma/client'
 import { prisma } from '../utils'
-import { QuestionService } from './questions'
 
-async function getGames(sessionId: number) {
+type Participant = {
+  participantId: string
+  participantTypeId: number
+}
+
+async function getGames(sessionId: string) {
   const games = await prisma.games.findMany({
     where: { session_id: sessionId },
     select: {
@@ -38,8 +41,6 @@ async function getGame(gameId: number) {
         },
       },
     })
-
-    // const { id, game_questions, game_participants } = game || {}
     return {
       game,
     }
@@ -48,35 +49,46 @@ async function getGame(gameId: number) {
   }
 }
 
-async function createGame(type: number, sessionId: number) {
-  const questions = await QuestionService.getQuestions(type)
-
-  const game: games = await prisma.games.create({
+async function createGame(
+  type: number,
+  sessionId: string,
+  participants: Participant[]
+) {
+  const game = await prisma.games.create({
     data: {
-      created_date: new Date(),
-      description: 'Some default description',
       session_id: sessionId,
       game_type_id: type,
-      game_questions: {
-        create: questions.map((item) => {
-          return { sequence: item.id, question_id: item.id }
-        }),
-      },
-    },
-    include: {
-      game_questions: {
-        include: {
-          questions: {
-            include: {
-              question_items: true,
-            },
-          },
-        },
-      },
+      created_date: new Date(),
     },
   })
 
-  return game
+  const lifelinesAndMilestones = await prisma.game_types.findFirst({
+    where: { id: type },
+    include: {
+      game_type_lifelines: {
+        include: {
+          lifelines: true,
+        },
+      },
+      game_type_milestones: true,
+    },
+  })
+
+  const { id, session_id, game_type_id, created_date } = game
+  const { game_type_lifelines, game_type_milestones } =
+    lifelinesAndMilestones || {}
+
+  return {
+    id,
+    sessionId: session_id,
+    gameTypeId: game_type_id,
+    status: 'Not Started',
+    createdDate: created_date,
+    participants: participants,
+    currentQuestion: 0,
+    lifelines: game_type_lifelines,
+    milestones: game_type_milestones,
+  }
 }
 
 const GameService = {

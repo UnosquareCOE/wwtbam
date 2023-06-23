@@ -72,7 +72,7 @@ model game_participant_types {
 model game_participants {
   id                         Int                          @id(map: "game_participants_pk") @default(autoincrement())
   game_id                    Int?
-  participant_id             Int?
+  participant_id             String?                      @db.Uuid
   game_participant_type_id   Int?
   game_participant_questions game_participant_questions[]
   game_participant_types     game_participant_types?      @relation(fields: [game_participant_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_participants_game_participant_types_game_participant_type_")
@@ -116,7 +116,7 @@ model games {
   id                Int                 @id(map: "games_pk") @default(autoincrement())
   created_date      DateTime?           @db.Timestamp(6)
   description       String?
-  session_id        Int?
+  session_id        String?             @db.Uuid
   game_type_id      Int?
   game_milestones   game_milestones[]
   game_participants game_participants[]
@@ -133,11 +133,11 @@ model lifelines {
 }
 
 model participants {
-  id                Int                 @id(map: "participants_pk") @default(autoincrement())
+  id                String              @id(map: "participants_pk") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name              String?
   avatar            String?
   created_date      DateTime?           @db.Timestamp(6)
-  session_id        Int?
+  session_id        String?             @db.Uuid
   game_participants game_participants[]
   sessions          sessions?           @relation(fields: [session_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "participants_sessions_session_id")
 }
@@ -167,7 +167,7 @@ model questions {
 }
 
 model sessions {
-  id            Int            @id(map: "sessions_pk") @default(autoincrement())
+  id            String         @id(map: "sessions_pk") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name          String?
   password      String?
   created_date  DateTime?      @db.Timestamp(6)

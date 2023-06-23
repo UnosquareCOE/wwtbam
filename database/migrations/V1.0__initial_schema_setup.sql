@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS public.accounts
 (
     id serial constraint accounts_pk primary key,
@@ -12,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.accounts
 
 CREATE TABLE IF NOT EXISTS public.sessions
 (
-    id serial constraint sessions_pk primary key,
+    id uuid DEFAULT uuid_generate_v4 () constraint sessions_pk primary key,
     name text,
     password text,
     created_date timestamp,
@@ -28,11 +30,11 @@ CREATE TABLE IF NOT EXISTS public.game_participant_types
 
 CREATE TABLE IF NOT EXISTS public.participants
 (
-    id serial constraint participants_pk primary key,
+    id uuid DEFAULT uuid_generate_v4 () constraint participants_pk primary key,
     name text,
     avatar text,
     created_date timestamp,
-    session_id int constraint participants_sessions_session_id references public.sessions
+    session_id uuid constraint participants_sessions_session_id references public.sessions
 );
 
 CREATE TABLE IF NOT EXISTS public.game_types
@@ -46,7 +48,7 @@ CREATE TABLE IF NOT EXISTS public.games
     id serial constraint games_pk primary key,
     created_date timestamp,
     description text,
-    session_id int constraint games_sessions_session_id references public.sessions,
+    session_id uuid constraint games_sessions_session_id references public.sessions,
     game_type_id int constraint games_game_types_game_type_id references public.game_types
 );
 
@@ -109,7 +111,7 @@ CREATE TABLE IF NOT EXISTS public.game_participants
 (
     id serial constraint game_participants_pk primary key,
     game_id int constraint game_participants_games_game_id references public.games,
-    participant_id int constraint game_participants_participants_participant_id references public.participants,
+    participant_id uuid constraint game_participants_participants_participant_id references public.participants,
     game_participant_type_id int constraint game_participants_game_participant_types_game_participant_type_id references public.game_participant_types
 );
 

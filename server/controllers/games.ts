@@ -3,7 +3,7 @@ import { GameService } from '../services'
 
 async function getGames(req: Request, res: Response) {
   const { sessionId } = req.params
-  const games = await GameService.getGames(parseInt(sessionId))
+  const games = await GameService.getGames(sessionId)
   if (games && games.length > 0) {
     res.status(200).json(games)
   } else {
@@ -21,16 +21,9 @@ async function getGame(req: Request, res: Response) {
   }
 }
 
-async function createGame(req: Request, res: Response) {
-  const { type, sessionId } = req.body
-  const game = await GameService.createGame(type, sessionId)
-  res.status(201).send(game)
-}
-
 const GameController = {
   getGames,
   getGame,
-  createGame,
 }
 
 export { GameController }

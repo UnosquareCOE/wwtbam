@@ -12,7 +12,7 @@ async function getSessions(req: Request, res: Response) {
 
 async function getSession(req: Request, res: Response) {
   const { sessionId } = req.params
-  const session = await SessionService.getSession(parseInt(sessionId))
+  const session = await SessionService.getSession(sessionId)
   if (session) {
     res.status(200).json(session)
   } else {
@@ -22,9 +22,7 @@ async function getSession(req: Request, res: Response) {
 
 async function getSessionParticipants(req: Request, res: Response) {
   const { sessionId } = req.params
-  const participants = await SessionService.getSessionParticipants(
-    parseInt(sessionId)
-  )
+  const participants = await SessionService.getSessionParticipants(sessionId)
   if (participants) {
     res.status(200).json(participants)
   } else {
@@ -45,7 +43,7 @@ async function createSession(req: Request, res: Response) {
 
 async function deleteSession(req: Request, res: Response) {
   const { sessionId } = req.params
-  const session = await SessionService.deleteSession(parseInt(sessionId))
+  const session = await SessionService.deleteSession(sessionId)
   if (session) {
     res.sendStatus(204)
   } else {
@@ -55,12 +53,19 @@ async function deleteSession(req: Request, res: Response) {
 
 async function getGames(req: Request, res: Response) {
   const { sessionId } = req.params
-  const games = await GameService.getGames(parseInt(sessionId))
+  const games = await GameService.getGames(sessionId)
   if (games && games.length > 0) {
     res.status(200).send(games)
   } else {
     res.send(204)
   }
+}
+
+async function createGame(req: Request, res: Response) {
+  const { sessionId } = req.params
+  const { type } = req.body
+  const game = await GameService.createGame(type, sessionId, [])
+  res.status(201).send(game)
 }
 
 const SessionController = {
@@ -70,6 +75,7 @@ const SessionController = {
   createSession,
   deleteSession,
   getGames,
+  createGame,
 }
 
 export { SessionController }

@@ -18,4 +18,6 @@ SessionsRouter.route('/:sessionId/participants').get(
 
 SessionsRouter.route('/:sessionId/games').get(SessionController.getGames)
 
+SessionsRouter.route('/:sessionId/games').post(SessionController.createGame)
+
 export { SessionsRouter }
