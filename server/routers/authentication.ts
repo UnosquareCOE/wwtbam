@@ -31,6 +31,22 @@ AuthenticationRouter.route('/').post(AuthenticationController.authenticate)
 
 /**
  * @swagger
+ * /auth/refresh:
+ *   post:
+ *     tags: [
+ *       auth
+ *     ]
+ *     summary: Refreshes a users JWT token
+ *     responses:
+ *       400:
+ *         description: Bad Request.
+ *       201:
+ *         description: User Authentication Refreshed
+ */
+AuthenticationRouter.route('/refresh').post(AuthenticationController.refresh)
+
+/**
+ * @swagger
  * /auth/register:
  *   post:
  *     tags: [

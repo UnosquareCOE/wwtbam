@@ -6,16 +6,22 @@ async function getSessions(ownerId: number) {
     select: {
       id: true,
       name: true,
+      password: true,
+      games: true,
+      participants: true,
       created_date: true,
     },
   })
 
   return sessions.map((session) => {
-    const { id, name, created_date } = session
+    const { id, name, created_date, password, games, participants } = session
     return {
       id,
       name: name,
       createdDate: created_date,
+      password: password,
+      games: games,
+      participants: participants,
     }
   })
 }
