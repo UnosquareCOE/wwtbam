@@ -1,0 +1,17 @@
+export const moneyLevels = [
+  { value: "£1,000,000", levelId: 15 },
+  { value: "£500,000", levelId: 14 },
+  { value: "£250,000", levelId: 13 },
+  { value: "£125,000", levelId: 12 },
+  { value: "£64,000", levelId: 11 },
+  { value: "£32,000", levelId: 10 },
+  { value: "£16,000", levelId: 9 },
+  { value: "£8,000", levelId: 8 },
+  { value: "£4,000", levelId: 7 },
+  { value: "£2,000", levelId: 6 },
+  { value: "£1,000", levelId: 5 },
+  { value: "£500", levelId: 4 },
+  { value: "£300", levelId: 3 },
+  { value: "£200", levelId: 2 },
+  { value: "£100", levelId: 1 },
+];
