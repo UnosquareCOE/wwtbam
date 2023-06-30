@@ -29,6 +29,8 @@ AccountsRouter.route('/').get(AccountController.getAccounts)
 
 AccountsRouter.route('/:accountId(\\d+)').get(AccountController.getAccount)
 
+AccountsRouter.route('/:emailAddress').get(AccountController.getAccountByEmail)
+
 AccountsRouter.route('/:accountId(\\d+)').put(AccountController.updateAccount)
 
 AccountsRouter.route('/:accountId(\\d+)').delete(

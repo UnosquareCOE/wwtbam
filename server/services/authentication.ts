@@ -12,7 +12,8 @@ async function authenticate(email: string, password: string) {
   const authenticated = await bcrypt.compare(password, account?.password ?? '')
 
   if (authenticated) {
-    return await generateTokens(account)
+    const tokens = await generateTokens(account)
+    return { tokens, account }
   }
 
   return null
