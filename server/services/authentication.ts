@@ -1,6 +1,8 @@
 import { prisma } from '../utils'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../constants/auth'
+import { AccountService } from './accounts'
 
 async function authenticate(email: string, password: string) {
   const account = await prisma.accounts.findFirst({
@@ -10,14 +12,35 @@ async function authenticate(email: string, password: string) {
   const authenticated = await bcrypt.compare(password, account?.password ?? '')
 
   if (authenticated) {
-    const accessToken = jwt.sign(
-      { accountId: account?.id },
-      `${process.env.JWT_SECRET}`
-    )
-    return accessToken
+    const tokens = await generateTokens(account)
+    return { tokens, account }
   }
 
   return null
+}
+
+async function refresh(accountId: number) {
+  const account = await AccountService.getAccount(accountId)
+  if (account) {
+    return await generateTokens(account)
+  }
+  return Error('Token could not be generated')
+}
+
+function generateTokens(account: any) {
+  return new Promise((response, reject) => {
+    try {
+      const accessToken = jwt.sign({ sub: account.id }, ACCESS_TOKEN_SECRET, {
+        expiresIn: 1000,
+      })
+      const refreshToken = jwt.sign({ sub: account.id }, REFRESH_TOKEN_SECRET, {
+        expiresIn: 60000,
+      })
+      response({ accessToken, refreshToken })
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 async function register(
@@ -47,6 +70,7 @@ async function register(
 const AuthenticationService = {
   authenticate,
   register,
+  refresh,
 }
 
 export { AuthenticationService }

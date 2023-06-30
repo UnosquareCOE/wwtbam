@@ -6,16 +6,22 @@ async function getSessions(ownerId: number) {
     select: {
       id: true,
       name: true,
+      password: true,
+      games: true,
+      participants: true,
       created_date: true,
     },
   })
 
   return sessions.map((session) => {
-    const { id, name, created_date } = session
+    const { id, name, created_date, password, games, participants } = session
     return {
       id,
       name: name,
       createdDate: created_date,
+      password: password,
+      games: games,
+      participants: participants,
     }
   })
 }
@@ -25,11 +31,12 @@ async function getSession(sessionId: string) {
     const session = await prisma.sessions.findFirst({
       where: { id: sessionId },
     })
-    const { id, name, created_date, owner_id } = session || {}
+    const { id, name, created_date, password, owner_id } = session || {}
     return {
       id,
       name: name,
       createdDate: created_date,
+      password: password,
       ownerId: owner_id,
     }
   } catch (error) {

@@ -20,6 +20,11 @@ async function getAccount(req: Request, res: Response) {
   }
 }
 
+async function getAccountByEmail(req: Request, res: Response) {
+  const { emailAddress } = req.params
+  const account = await AccountService.getAccountByEmail(emailAddress)
+}
+
 async function createAccount(req: Request, res: Response) {
   const { email, firstName, lastName, password } = req.body
   const account = await AccountService.createAccount(
@@ -65,6 +70,7 @@ async function deleteAccount(req: Request, res: Response) {
 const AccountController = {
   getAccounts,
   getAccount,
+  getAccountByEmail,
   createAccount,
   updateAccount,
   deleteAccount,

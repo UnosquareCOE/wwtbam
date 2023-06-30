@@ -45,6 +45,30 @@ async function getAccount(accountId: number) {
   }
 }
 
+async function getAccountByEmail(emailAddress: string) {
+  try {
+    const account = await prisma.accounts.findFirst({
+      where: { email: emailAddress },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+      },
+    })
+
+    const { id, first_name, last_name, email } = account || {}
+    return {
+      id,
+      firstName: first_name,
+      lastName: last_name,
+      emailAddress: email,
+    }
+  } catch (error) {
+    return null
+  }
+}
+
 async function createAccount(
   email: string,
   firstName: string,
@@ -97,6 +121,7 @@ async function deleteAccount(accountId: number) {
 const AccountService = {
   getAccounts,
   getAccount,
+  getAccountByEmail,
   createAccount,
   updateAccount,
   deleteAccount,
