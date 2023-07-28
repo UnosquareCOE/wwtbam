@@ -27,6 +27,8 @@ jobs:
         node-version: '18'
     - name: npm build
       id: build-ui
+      env:
+        CI: false
       run: npm i && npm run-script build
     - name: updated app to s3
       run: aws s3 sync build s3://vue-academy/
